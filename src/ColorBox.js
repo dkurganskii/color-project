@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import styles from './styles/ColorBoxStyles';
 import chroma from 'chroma-js';
 import { withStyles } from '@material-ui/styles';
-import './ColorBox.css';
 
 class ColorBox extends Component {
 	constructor(props) {
