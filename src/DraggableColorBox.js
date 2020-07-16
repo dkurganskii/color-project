@@ -1,5 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/styles';
+
 const styles = {
 	root: {
 		width: '20%',
@@ -15,7 +16,7 @@ const styles = {
 function DraggableColorBox(props) {
 	return (
 		<div className={props.classes.root} style={{ backgroundColor: props.color }}>
-			{props.color}
+			{props.name}
 		</div>
 	);
 }
