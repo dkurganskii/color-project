@@ -11,9 +11,10 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Button from '@material-ui/core/Button';
-import DraggableColorBox from './DraggableColorBox';
+import DraggableColorList from './DraggableColorList';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { ChromePicker } from 'react-color';
+import arrayMove from 'array-move';
 const drawerWidth = 400;
 const styles = (theme) => ({
 	root: {
@@ -87,6 +88,7 @@ class NewPaletteForm extends Component {
 		this.addNewColor = this.addNewColor.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.removeColor = this.removeColor.bind(this);
 	}
 	componentDidMount() {
 		ValidatorForm.addValidationRule('isColorNameUnique', (value) =>
@@ -141,6 +143,30 @@ class NewPaletteForm extends Component {
 			colors: this.state.colors.filter((color) => color.name !== colorName)
 		});
 	}
+
+	onSortEnd = ({ oldIndex: oldI, newIndex: newI }) => {
+		const { colors } = this.state;
+		const movingColor = colors[oldI];
+		const backwards = oldI > newI;
+		let newOrder;
+		if (backwards) {
+			newOrder = [
+				...colors.slice(0, newI),
+				movingColor,
+				...colors.slice(newI, oldI),
+				...colors.slice(oldI + 1)
+			];
+		} else {
+			newOrder = [
+				...colors.slice(0, oldI),
+				...colors.slice(oldI + 1, newI + 1),
+				movingColor,
+				...colors.slice(newI + 1)
+			];
+		}
+		this.setState({ colors: newOrder });
+	};
+
 	render() {
 		const { classes } = this.props;
 		const { open } = this.state;
@@ -231,14 +257,12 @@ class NewPaletteForm extends Component {
 					})}
 				>
 					<div className={classes.drawerHeader} />
-					{this.state.colors.map((color) => (
-						<DraggableColorBox
-							key={color.name}
-							color={color.color}
-							name={color.name}
-							handleClick={() => this.removeColor(color.name)}
-						/>
-					))}
+					<DraggableColorList
+						colors={this.state.colors}
+						removeColor={this.removeColor}
+						axis="xy"
+						onSortEnd={this.onSortEnd}
+					/>
 				</main>
 			</div>
 		);
